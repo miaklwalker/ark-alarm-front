@@ -95,8 +95,8 @@ let database = {
                     "Gen2": "27031",
                     "lostisland": "27047"
                 },
-                "enemies": [],
-                "tribemates": []
+                "enemies": ["miakl"],
+                "tribemates": ["123"]
             }
         }
     },

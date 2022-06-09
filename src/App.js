@@ -1,4 +1,3 @@
-
 import './App.css';
 import {useEffect, useState} from "react";
 
@@ -11,7 +10,6 @@ const MapContainer = (({data:[mapName,portNumber]})=>{
 })
 
 function ArkAlarmForm({data}){
-  let maps = data.data
   return (
       <form action="">
         <label htmlFor="">
@@ -34,10 +32,12 @@ function ArkAlarmForm({data}){
         <label htmlFor="">
           enemies
           <input type="text"/>
+            {data.enemies.map(enemy => <input type="text" defaultValue={enemy}/>)}
         </label>
         <label htmlFor="">
           tribemates
           <input type="text"/>
+            {data.tribemates.map(tribemate => <input type="text" defaultValue={tribemate}/>)}
         </label>
       </form>
   )
