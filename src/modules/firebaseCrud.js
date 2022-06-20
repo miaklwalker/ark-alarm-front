@@ -68,9 +68,6 @@ export class FirebaseCrud {
     }
 }
 export class KeyCrud extends FirebaseCrud{
-    constructor(collectionName){
-        super(collectionName);
-    }
     async getFromDatabase(id){
         let docRef = doc(this.db,this.collectionName,id);
         let data = await getDoc(docRef);
