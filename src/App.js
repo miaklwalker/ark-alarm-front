@@ -21,7 +21,8 @@ class WithSaveHelper extends Component {
         super(props);
         this.state = {
             loaded:false,
-            clientData:{}
+            clientData:{},
+            submitted:false,
         }
         this.key=null;
     }
@@ -30,19 +31,24 @@ class WithSaveHelper extends Component {
         this.setState({loaded:true,clientData:state});
     }
     componentDidMount(){
-        let search = window.location.search.substring(1);
-        this.key = search;
-        let hasSessionStorage = sessionStorage.getItem(search);
+        this.key = window.location.search.substring(1);
+        let hasSessionStorage = sessionStorage.getItem(this.key);
         if(hasSessionStorage){
             this.setState({loaded:true,clientData:JSON.parse(hasSessionStorage)})
         }else{
             keyCrud
             .getFromDatabase(this.key)
             .then(data => {
-                userCrud
-                .getFromDatabase(data.name)
-                .then(res=>this.saveHelper(res))
+                if(data){
+                    userCrud
+                    .getFromDatabase(data.name)
+                    .then(res=>this.saveHelper(res))
+                }else{
+                    this.setState({loaded:true,clientData:null,submitted:true})
+                }
+                
             })
+            .catch(err=>console.log(err));
             
         }
     }
@@ -86,29 +92,35 @@ class App extends WithSaveHelper {
     handleSubmit=(e)=>{
         e.preventDefault();
         userCrud.UpdateDatabase(transformData(this.state.clientData));
-
+        keyCrud.DeleteFromDatabase(this.key);
+        sessionStorage.clear();
+        this.submitted = true;
     }
     render(){
-
         let cluster = this.state.loaded && this.state.clientData && Object.keys(this.state.clientData.data);
         return(
-            this.state.loaded &&
-            <div className="App">
-                <h1>Ark Alarm</h1>
-                <h2>{this.state.clientData?.name}'s config page</h2>
-                {cluster && cluster.map((name,i) => <div key={i}>{name}</div>)}
-                {cluster && cluster.map((name,i) => <ArkAlarmForm
-                name={name}
-                handleRemove={this.removeMapFromList}
-                handleChange={this.handleChange}
-                handleListChange={this.handleListChange}
-                handleMapChanges={this.handleMapChanges}
-                handleAddToList={this.handleAddToList}
-                handleSubmit={this.handleSubmit}
-                key={i}
-                data={this.state.clientData.data[name]}
-            /> )}
-            </div>)
+            <div className="container">
+                {this.state.loaded && !this.state.submitted && 
+                <div className="App">
+                    <h1>Ark Alarm</h1>
+                    <h2>{this.state.clientData?.name}'s config page</h2>
+                    {cluster && cluster.map((name,i) => <div key={i}>{name}</div>)}
+                    {cluster && cluster.map((name,i) => <ArkAlarmForm
+                        name={name}
+                        handleRemove={this.removeMapFromList}
+                        handleChange={this.handleChange}
+                        handleListChange={this.handleListChange}
+                        handleMapChanges={this.handleMapChanges}
+                        handleAddToList={this.handleAddToList}
+                        handleSubmit={this.handleSubmit}
+                        key={i}
+                        data={this.state.clientData.data[name]}/> )}
+                </div>
+                }
+                {this.state.submitted && <div className='submitted'>Thank you for submitting your config</div>}
+            </div>
+
+        )
     }
 }
 

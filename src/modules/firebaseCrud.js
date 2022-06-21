@@ -62,16 +62,20 @@ export class FirebaseCrud {
         const docSnapshot = await getDoc(docRef);
         return docSnapshot.data();
     }
-    async DeleteFromDatabase(){
-        const docRef = doc(this.db,this.collectionName,this.id);
+    async DeleteFromDatabase(id){
+        console.log(id)
+        const docRef = doc(this.db,this.collectionName,id);
         await deleteDoc(docRef);
     }
 }
 export class KeyCrud extends FirebaseCrud{
     async getFromDatabase(id){
         let docRef = doc(this.db,this.collectionName,id);
-        let data = await getDoc(docRef);
-        return data.data();
+        let dataSnapshot = await getDoc(docRef);
+        if(this.id === null){
+            this.id = dataSnapshot.id;
+        }
+        return dataSnapshot.data();
     }
     async AddToDatabase(data){
         const docRef = await addDoc(collection(this.db, this.collectionName), {"name": data});
