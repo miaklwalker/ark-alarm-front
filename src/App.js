@@ -1,61 +1,12 @@
 import './App.css';
-import {Component} from "react";
 import ArkAlarmForm from "./components/ArkAlarmForm/arkAlarmForm";
-import {FirebaseCrud, KeyCrud} from "./modules/firebaseCrud";
+import transformData from "./modules/transformData";
+import WithSaveHelper from "./components/withSaveHelper/withSaveHelper";
+import {keyCrud, userCrud} from "./index";
+import {ChakraProvider, Tab, TabList, TabPanel, TabPanels, Tabs} from '@chakra-ui/react'
 
 
 
-
-function transformData(data){
-    let newData = {};
-    newData["Discord Server"] = data.name;
-    newData["Configs"] = data.data;
-    return newData;
-}
-
-const userCrud = new FirebaseCrud("Users");
-const keyCrud = new KeyCrud("Keys");
-
-class WithSaveHelper extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            loaded:false,
-            clientData:{},
-            submitted:false,
-        }
-        this.key=null;
-    }
-    saveHelper(state){
-        sessionStorage.setItem(this.key,JSON.stringify(state))
-        this.setState({loaded:true,clientData:state});
-    }
-    componentDidMount(){
-        this.key = window.location.search.substring(1);
-        let hasSessionStorage = sessionStorage.getItem(this.key);
-        if(hasSessionStorage){
-            this.setState({loaded:true,clientData:JSON.parse(hasSessionStorage)})
-        }else{
-            keyCrud
-            .getFromDatabase(this.key)
-            .then(data => {
-                if(data){
-                    userCrud
-                    .getFromDatabase(data.name)
-                    .then(res=>this.saveHelper(res))
-                }else{
-                    this.setState({loaded:true,clientData:null,submitted:true})
-                }
-                
-            })
-            .catch(err=>console.log(err));
-            
-        }
-    }
-    render(){
-        return <div> This component does not have a render method setup</div>
-    }
-}
 
 class App extends WithSaveHelper {
     removeMapFromList = (key,value) => {
@@ -89,36 +40,50 @@ class App extends WithSaveHelper {
         temp.data[key][name].push(value);
         this.saveHelper(temp);
     }
-    handleSubmit=(e)=>{
+    handleSubmit= async (e)=>{
         e.preventDefault();
-        userCrud.UpdateDatabase(transformData(this.state.clientData));
-        keyCrud.DeleteFromDatabase(this.key);
+        await userCrud.UpdateDatabase(transformData(this.state.clientData));
+        await keyCrud.DeleteFromDatabase(this.key);
         sessionStorage.clear();
-        this.submitted = true;
+        this.setState({submitted:true});
+        console.log("saved")
     }
     render(){
         let cluster = this.state.loaded && this.state.clientData && Object.keys(this.state.clientData.data);
+        console.log(this.state.submitted)
         return(
+            <ChakraProvider>
             <div className="container">
-                {this.state.loaded && !this.state.submitted && 
+                {this.state.loaded && !this.state.submitted &&
                 <div className="App">
                     <h1>Ark Alarm</h1>
                     <h2>{this.state.clientData?.name}'s config page</h2>
-                    {cluster && cluster.map((name,i) => <div key={i}>{name}</div>)}
-                    {cluster && cluster.map((name,i) => <ArkAlarmForm
-                        name={name}
-                        handleRemove={this.removeMapFromList}
-                        handleChange={this.handleChange}
-                        handleListChange={this.handleListChange}
-                        handleMapChanges={this.handleMapChanges}
-                        handleAddToList={this.handleAddToList}
-                        handleSubmit={this.handleSubmit}
-                        key={i}
-                        data={this.state.clientData.data[name]}/> )}
+                    <Tabs>
+                        <TabList>
+                            {cluster && cluster.map((name,i) => <Tab key={i}>{name}</Tab>)}
+                            <Tab> + </Tab>
+                        </TabList>
+                        <TabPanels>
+                            {cluster && cluster.map((name,i) =>
+                                <TabPanel key={i}>
+                                    <ArkAlarmForm
+                                        name={name}
+                                        handleRemove={this.removeMapFromList}
+                                        handleChange={this.handleChange}
+                                        handleListChange={this.handleListChange}
+                                        handleMapChanges={this.handleMapChanges}
+                                        handleAddToList={this.handleAddToList}
+                                        handleSubmit={this.handleSubmit}
+
+                                        data={this.state.clientData.data[name]}/>
+                                </TabPanel>)}
+                        </TabPanels>
+                    </Tabs>
                 </div>
                 }
                 {this.state.submitted && <div className='submitted'>Thank you for submitting your config</div>}
             </div>
+            </ChakraProvider>
 
         )
     }
