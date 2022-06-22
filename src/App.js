@@ -19,6 +19,16 @@ class App extends WithSaveHelper {
         temp.data[key][field] = value;
         this.saveHelper(temp)
     }
+    handleServerNickName = (key,field,value)=>{
+        let temp = this.state.clientData;
+        temp.data[key][field] = value;
+        let nickname = temp.data[key].server.split(" ").map(word=>word[0]).join("");
+        temp.data[nickname] = temp.data[key];
+        if(key !== nickname) {
+            delete temp.data[key];
+        }
+        this.setState(temp);
+    }
     handleMapChanges=(key,name,value,unique = false)=>{
         let temp = this.state.clientData;
         let hasName = Object.keys(temp.data[key].maps).includes(name);
@@ -50,7 +60,6 @@ class App extends WithSaveHelper {
     }
     render(){
         let cluster = this.state.loaded && this.state.clientData && Object.keys(this.state.clientData.data);
-        console.log(this.state.submitted)
         return(
             <ChakraProvider>
             <div className="container">
@@ -68,13 +77,13 @@ class App extends WithSaveHelper {
                                 <TabPanel key={i}>
                                     <ArkAlarmForm
                                         name={name}
+                                        handleNickname={this.handleServerNickName}
                                         handleRemove={this.removeMapFromList}
                                         handleChange={this.handleChange}
                                         handleListChange={this.handleListChange}
                                         handleMapChanges={this.handleMapChanges}
                                         handleAddToList={this.handleAddToList}
                                         handleSubmit={this.handleSubmit}
-
                                         data={this.state.clientData.data[name]}/>
                                 </TabPanel>)}
                         </TabPanels>

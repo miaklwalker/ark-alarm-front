@@ -10,7 +10,8 @@ export default function ArkAlarmForm({
                                          handleAddToList,
                                          handleChange,
                                          handleListChange,
-                                         handleMapChanges
+                                         handleMapChanges,
+                                         handleNickname
                                      }) {
     let [{port, mapName}, setPortState] = useState({port: null, mapName: null});
     let [enemy, setEnemy] = useState("");
@@ -41,7 +42,7 @@ export default function ArkAlarmForm({
             <FormLabel>Server</FormLabel>
             <Input
                 type={"text"}
-                onChange={(e) => handleChange(name, "server", e.target.value)}
+                onChange={(e) => handleNickname(name, "server", e.target.value)}
                 defaultValue={data.server}
                 htmlSize={8}
                 width='auto'

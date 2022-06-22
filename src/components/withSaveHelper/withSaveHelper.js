@@ -19,7 +19,8 @@ export default class WithSaveHelper extends Component {
         this.key = window.location.search.substring(1);
         let hasSessionStorage = sessionStorage.getItem(this.key);
         if(hasSessionStorage){
-            this.setState({loaded:true,clientData:JSON.parse(hasSessionStorage)})
+            let state = {loaded:true,clientData:JSON.parse(hasSessionStorage)}
+            this.saveHelper(state)
         }else{
             keyCrud
                 .getFromDatabase(this.key)
