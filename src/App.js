@@ -19,10 +19,21 @@ class App extends WithSaveHelper {
         temp.data[key][field] = value;
         this.saveHelper(temp)
     }
+    makeNickName(name){
+        // nickname
+        // if one word ->  all lower case one word
+        // two words  -> all lower case the first letter of each word
+        let splitName = name.split(" ");
+        if(splitName.length === 1){
+            return name.toLowerCase();
+        }else if(splitName.length > 1){
+            return splitName.map(word=>word[0]).join("")
+        }
+    }
     handleServerNickName = (key,field,value)=>{
         let temp = this.state.clientData;
         temp.data[key][field] = value;
-        let nickname = temp.data[key].server.split(" ").map(word=>word[0]).join("");
+        let nickname = this.makeNickName(temp.data[key].server);
         temp.data[nickname] = temp.data[key];
         if(key !== nickname) {
             delete temp.data[key];
