@@ -6,7 +6,7 @@ const MapContainer = (({data:[mapName,portNumber],handleClick,name,handleChange}
         return (e)=>handleChange(name,mapName,e.target.value)
     }
     return (<div className={"map-container"}>
-        <HStack>
+        <HStack mb={"2%"}>
             <Input width={"auto"} htmlSize={"15"} type={"text"} readOnly value={mapName}/>
             <Input width={"auto"} htmlSize={"6"} type={"text"} onChange={helper()} value={portNumber} />
             <Button colorScheme={"red"}

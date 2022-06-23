@@ -1,6 +1,6 @@
 import MapContainer from "../mapContainer/mapContainer";
 import {useState} from "react";
-import {FormControl, Input, FormLabel, FormHelperText, Button, HStack, VStack} from "@chakra-ui/react";
+import {FormControl, Input, FormLabel, FormHelperText, Button, HStack, VStack,Box} from "@chakra-ui/react";
 
 export default function ArkAlarmForm({
                                          name,
@@ -35,8 +35,8 @@ export default function ArkAlarmForm({
     let enemyHelper = saveHelper(enemy, setEnemy);
     let tribemateHelper = saveHelper(tribemate, setTribemate);
     return (
-        <form onSubmit={handleSubmit}>
-        <FormControl>
+            <form onSubmit={handleSubmit}>
+            <FormControl>
             <HStack align={"flex-end"} >
                 <span>
             <FormLabel>Server</FormLabel>
@@ -108,7 +108,7 @@ export default function ArkAlarmForm({
         </HStack>
             <VStack align={"flex-start"}>
             {data.enemies.map((enemy, i) =>
-                <HStack  key={i}>
+                <HStack mt={"2%"} mb={"2%"}   key={i}>
                         <Input
                             type="text"
                             key={i}
@@ -132,7 +132,7 @@ export default function ArkAlarmForm({
         </HStack>
             <VStack align={"flex-start"}>
             {data.tribemates.map((tribemate, i) =>
-                <HStack  key={i}>
+                <HStack mt={"2%"} mb={"2%"}  key={i}>
                     <Input
                         type="text"
                         key={i}
@@ -144,7 +144,8 @@ export default function ArkAlarmForm({
                 </HStack>
             )}
         </VStack>
-            <Button mt={"2%"} type={"submit"}>Save To Server</Button>
+            <Button colorScheme={"orange"} mt={"4%"} type={"submit"}>Save To Server</Button>
         </FormControl>
-        </form>)
+        </form>
+            )
 }

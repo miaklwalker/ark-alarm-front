@@ -1,3 +1,4 @@
+import { randomStringAlphaNumeric } from "another-random-package";
 import {Component} from "react";
 import {keyCrud, userCrud} from "../../index";
 
@@ -10,6 +11,7 @@ export default class WithSaveHelper extends Component {
             submitted:false,
         }
         this.key=null;
+        this.keys ={}
     }
     saveHelper(state){
         sessionStorage.setItem(this.key,JSON.stringify(state))
@@ -19,21 +21,18 @@ export default class WithSaveHelper extends Component {
         this.key = window.location.search.substring(1);
         let hasSessionStorage = sessionStorage.getItem(this.key);
         if(hasSessionStorage){
-            let state = {loaded:true,clientData:JSON.parse(hasSessionStorage)}
-            this.saveHelper(state)
+            this.saveHelper(JSON.parse(hasSessionStorage))
         }else{
-            keyCrud
-                .getFromDatabase(this.key)
-                .then(data => {
-                    if(data){
-                        userCrud
-                            .getFromDatabase(data.name)
-                            .then(res=>this.saveHelper(res))
-                    }else{
-                        this.setState({loaded:true,clientData:null,submitted:true})
-                    }
-                })
-                .catch(err=>console.log(err));
+            keyCrud.getFromDatabase(this.key)
+            .then(data => {
+                if(data){
+                    userCrud.
+                    getFromDatabase(data.name)
+                    .then(res=>this.saveHelper(res))
+                }else{
+                    this.setState({loaded:true,clientData:null,submitted:true})
+                }
+            })
         }
     }
     render(){

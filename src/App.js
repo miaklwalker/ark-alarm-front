@@ -3,8 +3,7 @@ import ArkAlarmForm from "./components/ArkAlarmForm/arkAlarmForm";
 import transformData from "./modules/transformData";
 import WithSaveHelper from "./components/withSaveHelper/withSaveHelper";
 import {keyCrud, userCrud} from "./index";
-import {ChakraProvider, Tab, TabList, TabPanel, TabPanels, Tabs} from '@chakra-ui/react'
-
+import {Box, ChakraProvider, Heading, Tab, TabList, TabPanel, TabPanels, Tabs,Flex, Code} from '@chakra-ui/react'
 
 
 
@@ -20,9 +19,6 @@ class App extends WithSaveHelper {
         this.saveHelper(temp)
     }
     makeNickName(name){
-        // nickname
-        // if one word ->  all lower case one word
-        // two words  -> all lower case the first letter of each word
         let splitName = name.split(" ");
         if(splitName.length === 1){
             return name.toLowerCase();
@@ -67,42 +63,56 @@ class App extends WithSaveHelper {
         await keyCrud.DeleteFromDatabase(this.key);
         sessionStorage.clear();
         this.setState({submitted:true});
-        console.log("saved")
     }
     render(){
         let cluster = this.state.loaded && this.state.clientData && Object.keys(this.state.clientData.data);
         return(
             <ChakraProvider>
-            <div className="container">
-                {this.state.loaded && !this.state.submitted &&
-                <div className="App">
-                    <h1>Ark Alarm</h1>
-                    <h2>{this.state.clientData?.name}'s config page</h2>
-                    <Tabs>
-                        <TabList>
-                            {cluster && cluster.map((name,i) => <Tab key={i}>{name}</Tab>)}
-                            <Tab> + </Tab>
-                        </TabList>
-                        <TabPanels>
-                            {cluster && cluster.map((name,i) =>
-                                <TabPanel key={i}>
-                                    <ArkAlarmForm
-                                        name={name}
-                                        handleNickname={this.handleServerNickName}
-                                        handleRemove={this.removeMapFromList}
-                                        handleChange={this.handleChange}
-                                        handleListChange={this.handleListChange}
-                                        handleMapChanges={this.handleMapChanges}
-                                        handleAddToList={this.handleAddToList}
-                                        handleSubmit={this.handleSubmit}
-                                        data={this.state.clientData.data[name]}/>
-                                </TabPanel>)}
-                        </TabPanels>
-                    </Tabs>
-                </div>
+            <Box className="container" >
+                {    this.state.loaded    &&  !this.state.submitted &&
+                <Box className="App" bgGradient='linear(to-l, #7928CA, #FF0080)' pb={"5%"} >
+                    <Heading p={"1%"} pb={"2%"} color={"gray.100"} >Ark Alarm</Heading>
+                    <Box w={"100%"} align={"center"} >
+                        <Box w="55%" p={"2.5%"} borderRadius={"7px"} background={"white"}>
+                        <Heading mb={"2%"}>{this.state.clientData?.name}'s {<br/>} Config Page</Heading>
+                            <Tabs>
+                                <TabList>
+                                    {cluster && cluster.map((name,i) => <Tab key={i}>{name}</Tab>)}
+                                    <Tab> + </Tab>
+                                </TabList>
+                                <TabPanels>
+                                    {cluster && cluster.map((name,i) =>
+                                        <TabPanel key={i}>
+                                            <ArkAlarmForm
+                                                name={name}
+                                                handleNickname={this.handleServerNickName}
+                                                handleRemove={this.removeMapFromList}
+                                                handleChange={this.handleChange}
+                                                handleListChange={this.handleListChange}
+                                                handleMapChanges={this.handleMapChanges}
+                                                handleAddToList={this.handleAddToList}
+                                                handleSubmit={this.handleSubmit}
+                                                data={this.state.clientData.data[name]}/>
+                                        </TabPanel>)}
+                                </TabPanels>
+                            </Tabs>
+                        </Box>
+                    </Box>
+                </Box>
                 }
-                {this.state.submitted && <div className='submitted'>Thank you for submitting your config</div>}
-            </div>
+                {this.state.submitted && <Flex 
+                direction={"column"}
+                h={"50vh"} 
+                align={"center"} 
+                justify={"center"} 
+                fontSize={"48px"} 
+                className='submitted'>
+                    Thank you for submitting your config
+                    {<br/>}
+                    <Box fontSize={"24px"}>please continue back to discord and run the {<Code> !A setup </Code>} command </Box>
+                    
+                    </Flex>}
+            </Box>
             </ChakraProvider>
 
         )
