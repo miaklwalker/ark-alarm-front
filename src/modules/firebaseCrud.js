@@ -1,4 +1,5 @@
 import {initializeApp} from "firebase/app";
+import {initializeAppCheck, ReCaptchaV3Provider} from "@firebase/app-check";
 import {
     getFirestore,
     collection,
@@ -31,7 +32,11 @@ export class FirebaseCrud {
     }
     init(){
         let app =  initializeApp(this.config);
+        initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LeZxpYgAAAAALRDSobD1r5GDeX_L8nauQdm_KPN'),
+            });
         this.db = getFirestore(app);
+
     }
     async getFromDatabase(name){
         const users = collection(this.db, this.collectionName);
