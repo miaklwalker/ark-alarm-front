@@ -1,4 +1,3 @@
-import { randomStringAlphaNumeric } from "another-random-package";
 import {Component} from "react";
 import {keyCrud, userCrud} from "../../index";
 
@@ -26,8 +25,8 @@ export default class WithSaveHelper extends Component {
             keyCrud.getFromDatabase(this.key)
             .then(data => {
                 if(data){
-                    userCrud.
-                    getFromDatabase(data.name)
+                    userCrud
+                    .getFromDatabase(data.name)
                     .then(res=>this.saveHelper(res))
                 }else{
                     this.setState({loaded:true,clientData:null,submitted:true})
