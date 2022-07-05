@@ -1,6 +1,6 @@
 import MapContainer from "../mapContainer/mapContainer";
 import {useState} from "react";
-import {FormControl, Input, FormLabel, FormHelperText, Button, HStack, VStack,Box} from "@chakra-ui/react";
+import {FormControl, Input, FormLabel, FormHelperText, Button, HStack, VStack} from "@chakra-ui/react";
 
 export default function ArkAlarmForm({
                                          name,
