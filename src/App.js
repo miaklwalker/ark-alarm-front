@@ -3,11 +3,26 @@ import ArkAlarmForm from "./components/ArkAlarmForm/arkAlarmForm";
 import transformData from "./modules/transformData";
 import WithSaveHelper from "./components/withSaveHelper/withSaveHelper";
 import {keyCrud, userCrud} from "./index";
-import {Box, ChakraProvider, Heading, Tab, TabList, TabPanel, TabPanels, Tabs,Flex, Code} from '@chakra-ui/react'
+import {
+    Box,
+    Button,
+    ButtonGroup,
+    ChakraProvider,
+    Heading,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
+    Flex,
+    Code,
+    Text, Link
+} from '@chakra-ui/react'
+import {Component} from "react";
 
 
 
-class App extends WithSaveHelper {
+class AppForm extends WithSaveHelper {
     removeMapFromList = (key,value) => {
         let temp = this.state.clientData;
         delete temp.data[key].maps[value];
@@ -67,7 +82,6 @@ class App extends WithSaveHelper {
     render(){
         let cluster = this.state.loaded && this.state.clientData && Object.keys(this.state.clientData.data);
         return(
-            <ChakraProvider>
             <Box className="container" >
                 {    this.state.loaded    &&  !this.state.submitted &&
                 <Box className="App" bgGradient='linear(to-l, #7928CA, #FF0080)' pb={"5%"} >
@@ -100,24 +114,61 @@ class App extends WithSaveHelper {
                     </Box>
                 </Box>
                 }
-                {this.state.submitted && <Flex 
+                {this.state.submitted && <Flex
                 direction={"column"}
-                h={"50vh"} 
-                align={"center"} 
-                justify={"center"} 
-                fontSize={"48px"} 
+                h={"50vh"}
+                align={"center"}
+                justify={"center"}
+                fontSize={"48px"}
                 className='submitted'>
                     Thank you for submitting your config
                     {<br/>}
                     <Box fontSize={"24px"}>please continue back to discord and run the {<Code> !A setup </Code>} command </Box>
-                    
+
                     </Flex>}
             </Box>
-            </ChakraProvider>
-
         )
     }
 }
-
-
+class Landing extends Component {
+    render(){
+        return(
+            <Flex align={"center"} height={"100vh"} justify={"center"} direction={"column"}>
+                <Heading  as={"h1"} size='3xl'>Ark Alarm</Heading>
+                <Heading  as={"h2"}>Discord bot</Heading>
+                <Text m={"5%"}>
+                    Tired of going to battlemetrics to see your server's status?
+                    <br/>
+                    Want to know who is on your map right from discord?
+                </Text>
+                <Button colorScheme='blue'>
+                    <Link
+                        href={"https://discord.com/api/oauth2/authorize?client_id=800086112990658561&permissions=8&scope=bot"}>
+                        Add it to your server today</Link>
+                </Button>
+            </Flex>
+        )
+    }
+}
+class App extends Component{
+    render(){
+        // if there is a search paramter in the url or in session storage, load the config
+        let search = window.location.search;
+        let key = sessionStorage.getItem("key");
+        let state;
+        if(search.length > 0 || key){
+            state = "Form";
+        }else{
+            state = "landing"
+        }
+        return(
+            <div className="App">
+                <ChakraProvider>
+                    {state === "landing" && <Landing/>}
+                    {state === "Form" && <AppForm key={key}/>}
+                </ChakraProvider>
+            </div>
+        )
+    }
+}
 export default App;
