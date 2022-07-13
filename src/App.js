@@ -6,7 +6,6 @@ import {keyCrud, userCrud} from "./index";
 import {
     Box,
     Button,
-    ButtonGroup,
     ChakraProvider,
     Heading,
     Tab,
@@ -38,7 +37,7 @@ class AppForm extends WithSaveHelper {
         if(splitName.length === 1){
             return name.toLowerCase();
         }else if(splitName.length > 1){
-            return splitName.map(word=>word[0]).join("")
+            return splitName.map(word=>word[0].toLowerCase()).join("")
         }
     }
     handleServerNickName = (key,field,value)=>{
