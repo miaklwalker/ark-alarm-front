@@ -1,6 +1,6 @@
 import {useFieldArray} from "react-hook-form";
 import {useEffect} from "react";
-import {Box, Button, Text} from "@chakra-ui/react";
+import {Button, Flex, Heading} from "@chakra-ui/react";
 import ArkAlarmInput from "../arkAlarmInput/arkAlarmInput";
 
 export default function ArkAlarmPersonalList({register,groupName,itemName,defValues,control,getValues,resetField}){
@@ -20,15 +20,22 @@ export default function ArkAlarmPersonalList({register,groupName,itemName,defVal
     }
     return (
         <>
-            <Text>{groupName}</Text>
-            <ArkAlarmInput noLabel register={register} name={itemName} defValue={"Steam NickName"}/>
-            <Button onClick={handleClick}> Add </Button>
+            <Heading size={"md"}>{groupName}</Heading>
+            <Flex justify={"flex-start"} align={"flex-end"}>
+                <ArkAlarmInput noLabel register={register} name={itemName} defValue={"Steam NickName"}/>
+                <Button colorScheme={"green"} onClick={handleClick}> Add </Button>
+            </Flex>
+            <br/>
+            <br/>
             {fields.map((field,index)=>(
-                <Box key={field.id}>
+                <Flex key={field.id}>
                     <ArkAlarmInput noLabel register={register} name={`${groupName}.${index}`} defValue={field[itemName]}/>
-                    <Button onClick={()=>remove(index)}>remove</Button>
-                </Box>
+                    <Button colorScheme={"red"} onClick={()=>remove(index)}>remove</Button>
+                </Flex>
             ))}
+            <br/>
+            <br/>
+            <hr/>
         </>
     )
 }

@@ -1,7 +1,8 @@
 import {useFieldArray} from "react-hook-form";
 import {useEffect} from "react";
-import {Box, Button, Flex, Text} from "@chakra-ui/react";
+import { Button, Flex, Heading} from "@chakra-ui/react";
 import ArkAlarmInput from "../arkAlarmInput/arkAlarmInput";
+import Spacer from "../Spacer";
 
 export default function ArkAlarmMapSection({control,register,getValues,defValues={},resetField}){
     const {fields,append,remove} = useFieldArray({name:'maps', control});
@@ -23,20 +24,20 @@ export default function ArkAlarmMapSection({control,register,getValues,defValues
 
     return(
         <>
-            <Text>maps</Text>
-            <Flex align={"flex-end"}>
+            <Heading size={"md"}>Add new maps</Heading>
+            <Flex justify={"space-around"} align={"flex-end"}>
                 <ArkAlarmInput register={register} name={"mapName"} defValue={"The Island"}/>
                 <ArkAlarmInput register={register} name={"port"} defValue={"27015"}/>
-                <Button onClick={handleClick}> Add </Button>
+                <Button colorScheme={"green"} onClick={handleClick}> Add </Button>
             </Flex>
-
+            <Spacer/>
             {fields.map((field,index)=>{
                 return(
-                    <Box key={field.id}>
+                    <Flex justify={"space-around"} m={"2% 0"} key={field.id}>
                         <ArkAlarmInput noLabel register={register} name={`maps.${index}.mapName`} defValue={field['mapName']}/>
                         <ArkAlarmInput noLabel register={register} name={`maps.${index}.port`} defValue={field['port']}/>
-                        <Button onClick={()=>remove(index)}>remove</Button>
-                    </Box>
+                        <Button colorScheme={"red"} onClick={()=>remove(index)}>remove</Button>
+                    </Flex>
                 )
             })}
         </>

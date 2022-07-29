@@ -1,4 +1,4 @@
-import {useEffect, useState} from "@types/react";
+import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {keyCrud, userCrud} from "../../index";
@@ -82,8 +82,8 @@ export default function FormController() {
                 <Box className="App" bgGradient='linear(to-l, #7928CA, #FF0080)' pb={"5%"}>
                     <Heading p={"1%"} pb={"2%"} color={"gray.100"}>Ark Alarm</Heading>
                     <Box w={"100%"} align={"center"}>
-                        <Box w="55%" p={"2.5%"} borderRadius={"7px"} background={"white"}>
-                            <Heading mb={"2%"}>{state.clientData?.name}'s {<br/>} Config Page</Heading>
+                        <Box w="55%" minW={"310px"} maxW={"648px"} p={"2.5%"} borderRadius={"7px"} background={"white"}>
+                            <Heading noOfLines={1} mb={"2%"}>{state.clientData?.name}'s {<br/>} Config Page</Heading>
                             <ErrorPopup messages={errors} />
                             <ArkAlarmForm
                                 formHook={formHook}
