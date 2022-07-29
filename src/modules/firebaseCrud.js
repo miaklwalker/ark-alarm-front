@@ -7,12 +7,13 @@ import {
     getDocs,
     where,
     doc,
-    query, 
+    query,
     addDoc,
-    updateDoc, 
-    deleteDoc} 
+    updateDoc,
+    deleteDoc}
     from "firebase/firestore/lite";
-    
+
+
 export class FirebaseCrud {
     constructor(collectionName) {
         this.config = {
@@ -58,7 +59,6 @@ export class FirebaseCrud {
         if(!this.id){
             await this.getDocFromDatabaseById(data["Discord Server"]);
         }
-        console.log(this)
         const docRef = doc(this.db,this.collectionName,this.id);
         await updateDoc(docRef,data);
     }
