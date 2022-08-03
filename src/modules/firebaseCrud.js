@@ -68,7 +68,6 @@ export class FirebaseCrud {
         return docSnapshot.data();
     }
     async DeleteFromDatabase(id){
-        console.log(id)
         const docRef = doc(this.db,this.collectionName,id);
         await deleteDoc(docRef);
     }
