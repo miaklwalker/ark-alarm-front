@@ -37,15 +37,17 @@ export class FirebaseCrud {
             provider: new ReCaptchaV3Provider('6LeZxpYgAAAAALRDSobD1r5GDeX_L8nauQdm_KPN'),
             });
         this.db = getFirestore(app);
+        if(sessionStorage.getItem("id")){
+            this.id = sessionStorage.getItem("id");
+        }
 
     }
     async getFromDatabase(name){
         const users = collection(this.db, this.collectionName);
         const queryConstraints = where("Discord Server", "==", name);
         const userSnapshot = await getDocs(query(users, queryConstraints));
-        if(this.id === null){
         this.id = userSnapshot.docs[0].id;
-        }
+        sessionStorage.setItem("id", this.id);
         let data = userSnapshot.docs.map(doc => doc.data()).map(doc => doc.Configs)[0];
         let res = {data,name}
         this.data = res;
@@ -55,14 +57,16 @@ export class FirebaseCrud {
         const docRef = await addDoc(collection(this.db, this.collectionName), {"Discord Server": name, Configs: data});
         this.id = docRef.id;
     }
-    async UpdateDatabase(data){
+     UpdateDatabase = async(data) => {
         if(!this.id){
             await this.getDocFromDatabaseById(data["Discord Server"]);
         }
+        console.log(this.id);
         const docRef = doc(this.db,this.collectionName,this.id);
         await updateDoc(docRef,data);
     }
     async getDocFromDatabaseById(id){
+        console.log(id);
         const docRef = doc(this.db,this.collectionName,id);
         const docSnapshot = await getDoc(docRef);
         return docSnapshot.data();

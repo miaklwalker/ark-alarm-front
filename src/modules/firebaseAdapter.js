@@ -13,23 +13,27 @@ export default function formToFirebaseAdapter(formData) {
     if (!formData) return;
     if (Object.keys(formData).length === 0) return;
     try {
-        const {ip, server, game, maps, enemies, tribemates} = formData;
-        const mapConversion = {}
-        if (maps) {
-            maps.forEach(({mapName, port}) => {
-                mapConversion[mapName] = port
-            })
-        }
-        let firebaseData = {
-            ip,
-            server,
-            game,
-            maps: mapConversion,
-            enemies,
-            tribemates
-        }
-        Joi.assert(firebaseData, userDataSchema)
-        return firebaseData;
+        let temp = {};
+        Object.keys(formData).forEach(key => {
+            let {ip, server, game, tribemates, enemies, maps} = formData[key];
+            const mapConversion = {};
+            if (maps) {
+                maps.forEach(({mapName, port}) => {
+                    mapConversion[mapName] = port
+                })
+            }
+            let firebaseData = {
+                ip,
+                server,
+                game,
+                maps: mapConversion,
+                enemies,
+                tribemates
+            }
+            Joi.assert(firebaseData, userDataSchema);
+            temp[key] = firebaseData;
+        })
+        return temp;
     } catch (err) {
         return err
     }

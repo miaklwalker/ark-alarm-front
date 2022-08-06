@@ -1,4 +1,4 @@
-function makeNickName(name) {
+export function makeNickName(name) {
     let splitName = name.split(" ");
     if (splitName.length === 1) {
         return name.toLowerCase();
