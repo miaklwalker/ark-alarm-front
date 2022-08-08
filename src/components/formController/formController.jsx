@@ -10,6 +10,7 @@ import formToFirebaseAdapter from "../../modules/firebaseAdapter";
 import {makeNickName} from "../../modules/nicknameState";
 import ErrorPopup from "../ErrorPopup/errorPopup";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
+import {app} from "../../modules/firebaseCrud";
 
 const formClusterData = Joi.object({
     server: Joi.string().min(3).max(55).required(),
@@ -42,20 +43,29 @@ function SubmitScreen(){
         </Flex>)
 }
 
+
+
 export default function FormController() {
+    // state stuff
     let [state, setState] = useState({
         loaded: false,
         clientData: {},
         submitted: false,
     });
-    sessionStorage.setItem("key", window.location.search.substring(1));
     const formHook = useForm({
         resolver: joiResolver(formDataSchema),
     });
     const { formState:{errors},handleSubmit,watch} = formHook;
-    console.log(formToFirebaseAdapter(watch()));
+
+    sessionStorage.setItem("key", window.location.search.substring(1));
+
 
     let clusters = state.loaded && state.clientData && Object.keys(state.clientData.data);
+    async function signIn (app,token) {
+        let auth = getAuth(app);
+        sessionStorage.setItem("token", token);
+        return signInWithCustomToken(auth,token)
+    }
     useEffect(() => {
         let hasSessionStorage = sessionStorage.getItem("userData");
         if (hasSessionStorage) {
@@ -67,8 +77,7 @@ export default function FormController() {
                    .getFromDatabase(key)
                    .then(({name,token}) =>{
                        if(name && token) {
-                           let auth = getAuth(userCrud.app)
-                           signInWithCustomToken(auth, token)
+                                signIn(app,token)
                                .then(() => {
                                    userCrud
                                        .getFromDatabase(name)
@@ -86,6 +95,7 @@ export default function FormController() {
         }
     }, []);
 
+
     async function handleSubmitHappyPath(data){
         let temp = state.clientData;
         temp.data = formToFirebaseAdapter(data)
@@ -98,7 +108,6 @@ export default function FormController() {
     async function handleSubmitSadPath(data){
         console.error(data.ip.message);
     }
-
     function handleAdd(){
         if(isProduction) {
             let prompt = window.prompt("Enter a nickname for this server");
@@ -124,7 +133,7 @@ export default function FormController() {
             alert("This feature is not yet available, Or is being developed for premium users");
         }
     }
-
+    console.log(formToFirebaseAdapter(watch()));
     return (
         state.loaded &&
         <Box className="container">

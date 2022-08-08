@@ -13,18 +13,19 @@ import {
     deleteDoc}
     from "firebase/firestore/lite";
 
+export const app = initializeApp({
+    apiKey: "AIzaSyBnayFnmXsJfvVEu7X1oix70Zhs3lK5JwE",
+    authDomain: "ark-alarm.firebaseapp.com",
+    projectId: "ark-alarm",
+    storageBucket: "ark-alarm.appspot.com",
+    messagingSenderId: "82556541130",
+    appId: "1:82556541130:web:1c7f9328e40ef7457dfc33",
+    measurementId: "G-6D6P3WX13T"
+});
+
 
 export class FirebaseCrud {
     constructor(collectionName) {
-        this.config = {
-            apiKey: "AIzaSyBnayFnmXsJfvVEu7X1oix70Zhs3lK5JwE",
-            authDomain: "ark-alarm.firebaseapp.com",
-            projectId: "ark-alarm",
-            storageBucket: "ark-alarm.appspot.com",
-            messagingSenderId: "82556541130",
-            appId: "1:82556541130:web:1c7f9328e40ef7457dfc33",
-            measurementId: "G-6D6P3WX13T"
-        };
         this.db = undefined;
         this.collectionName = collectionName;
         this.id = null;
@@ -33,10 +34,7 @@ export class FirebaseCrud {
         this.init();
     }
     init(){
-        this.app = initializeApp(this.config);
-        // initializeAppCheck(this.app, {
-        //     provider: new ReCaptchaV3Provider('6LeZxpYgAAAAALRDSobD1r5GDeX_L8nauQdm_KPN'),
-        //     });
+        this.app = app
         this.db = getFirestore(this.app);
         if(sessionStorage.getItem("id")){
             this.id = sessionStorage.getItem("id");
@@ -53,10 +51,6 @@ export class FirebaseCrud {
         let res = {data,name}
         this.data = res;
         return res
-    }
-    async AddToDatabase(name,data){
-        const docRef = await addDoc(collection(this.db, this.collectionName), {"Discord Server": name, Configs: data});
-        this.id = docRef.id;
     }
      UpdateDatabase = async(data) => {
         if(!this.id){
@@ -91,3 +85,10 @@ export class KeyCrud extends FirebaseCrud{
         this.id = docRef.id;
     }
 }
+
+
+
+
+// initializeAppCheck(this.app, {
+//     provider: new ReCaptchaV3Provider('6LeZxpYgAAAAALRDSobD1r5GDeX_L8nauQdm_KPN'),
+//     });
