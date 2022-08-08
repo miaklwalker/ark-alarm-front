@@ -7,8 +7,8 @@ const MapContainer = (({data:[mapName,portNumber],handleClick,name,handleChange}
     }
     return (<div className={"map-container"}>
         <HStack mb={"2%"}>
-            <Input width={"auto"} htmlSize={"15"} type={"text"} readOnly value={mapName}/>
-            <Input width={"auto"} htmlSize={"6"} type={"text"} onChange={helper()} value={portNumber} />
+            <Input width={"auto"} htmlSize={15} type={"text"} readOnly value={mapName}/>
+            <Input width={"auto"} htmlSize={6} type={"text"} onChange={helper()} value={portNumber} />
             <Button colorScheme={"red"}
                     onClick={e=>{
                         e.preventDefault();

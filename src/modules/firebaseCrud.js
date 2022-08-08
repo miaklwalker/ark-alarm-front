@@ -1,5 +1,5 @@
 import {initializeApp} from "firebase/app";
-import {initializeAppCheck, ReCaptchaV3Provider} from "@firebase/app-check";
+//import {initializeAppCheck, ReCaptchaV3Provider} from "@firebase/app-check";
 import {
     getFirestore,
     collection,
@@ -27,16 +27,17 @@ export class FirebaseCrud {
         };
         this.db = undefined;
         this.collectionName = collectionName;
-        this.id=null;
+        this.id = null;
         this.data = null;
+        this.app = null;
         this.init();
     }
     init(){
-        let app =  initializeApp(this.config);
-        initializeAppCheck(app, {
-            provider: new ReCaptchaV3Provider('6LeZxpYgAAAAALRDSobD1r5GDeX_L8nauQdm_KPN'),
-            });
-        this.db = getFirestore(app);
+        this.app = initializeApp(this.config);
+        // initializeAppCheck(this.app, {
+        //     provider: new ReCaptchaV3Provider('6LeZxpYgAAAAALRDSobD1r5GDeX_L8nauQdm_KPN'),
+        //     });
+        this.db = getFirestore(this.app);
         if(sessionStorage.getItem("id")){
             this.id = sessionStorage.getItem("id");
         }

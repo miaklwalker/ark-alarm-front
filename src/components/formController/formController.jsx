@@ -9,6 +9,7 @@ import Joi from "joi";
 import formToFirebaseAdapter from "../../modules/firebaseAdapter";
 import {makeNickName} from "../../modules/nicknameState";
 import ErrorPopup from "../ErrorPopup/errorPopup";
+import { getAuth, signInWithCustomToken } from "firebase/auth";
 
 const formClusterData = Joi.object({
     server: Joi.string().min(3).max(55).required(),
@@ -61,21 +62,26 @@ export default function FormController() {
             setState({loaded: true, clientData: JSON.parse(hasSessionStorage), submitted: false});
         } else {
             let key = sessionStorage.getItem("key");
-            if (key) {
-                keyCrud.getFromDatabase(key)
-                    .then(data => {
-                        if (data) {
-                            userCrud
-                                .getFromDatabase(data.name)
-                                .then(res => {
-                                    sessionStorage.setItem("userData", JSON.stringify(res))
-                                    setState({loaded: true, clientData: res, submitted: false});
-                                })
-                        } else {
-                            setState({loaded: true, clientData: null, submitted: true})
-                        }
+            if(key){
+               keyCrud
+                   .getFromDatabase(key)
+                   .then(({name,token}) =>{
+                       if(name && token) {
+                           let auth = getAuth(userCrud.app)
+                           signInWithCustomToken(auth, token)
+                               .then(() => {
+                                   userCrud
+                                       .getFromDatabase(name)
+                                       .then(res => {
+                                           sessionStorage.setItem("userData", JSON.stringify(res))
+                                           setState({loaded: true, clientData: res, submitted: false});
+                                       })
+                               })
+                       }else{
+                           setState({loaded: true, clientData: null, submitted: true})
+                       }
+                   })
 
-                    })
             }
         }
     }, []);
@@ -131,11 +137,11 @@ export default function FormController() {
                             <ErrorPopup messages={errors} />
                             <Tabs>
                                 <TabList>
-                                    {clusters.map(cluster => <Tab>{cluster}</Tab>)}
+                                    {clusters.map((cluster,index) => <Tab key={index}>{cluster}</Tab>)}
                                     <Tab onClick={handleAdd}> + </Tab>
                                 </TabList>
                                 <TabPanels>
-                                    {clusters.map(cluster => <TabPanel>
+                                    {clusters.map((cluster,index) => <TabPanel key={index}>
                                         <ArkAlarmForm
                                             clusterName={cluster}
                                             formHook={formHook}
