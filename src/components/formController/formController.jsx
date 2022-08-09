@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {isDevelopment, isDevelopmentWrapper, keyCrud, userCrud} from "../../index";
+import {isDevelopmentWrapper, keyCrud, userCrud} from "../../index";
 import transformData from "../../modules/transformData";
 import {Box, Code, Flex, Heading, Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
 import ArkAlarmForm from "../ArkAlarmForm/arkAlarmForm";
