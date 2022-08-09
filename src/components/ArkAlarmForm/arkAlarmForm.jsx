@@ -5,7 +5,7 @@ import {Button, Flex} from "@chakra-ui/react";
 import Spacer from "../Spacer";
 
 
-export default function ArkAlarmForm({userData, formHook, handleSubmitToFirebase,clusterName}) {
+export default function ArkAlarmForm({userData, formHook, handleSubmitToFirebase,clusterName,handleDelete}) {
     const {register} = formHook;
     return (
         userData &&
@@ -30,6 +30,7 @@ export default function ArkAlarmForm({userData, formHook, handleSubmitToFirebase
                                   clusterName={clusterName}
                                   {...formHook}/>
             <Button as={"button"} colorScheme={"orange"} mt={"4%"} type="submit">Save To Server</Button>
+            <Button as={"button"} colorScheme={"red"} mt={"4%"} ml={"3%"} onClick={()=>handleDelete(clusterName)}>Remove Cluster</Button>
         </form>
     )
 }

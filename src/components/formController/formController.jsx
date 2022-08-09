@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {isProduction, keyCrud, userCrud} from "../../index";
+import {isDevelopment, isDevelopmentWrapper, keyCrud, userCrud} from "../../index";
 import transformData from "../../modules/transformData";
 import {Box, Code, Flex, Heading, Tab, TabList, TabPanel, TabPanels, Tabs} from "@chakra-ui/react";
 import ArkAlarmForm from "../ArkAlarmForm/arkAlarmForm";
@@ -43,10 +43,14 @@ function SubmitScreen(){
         </Flex>)
 }
 
-
+function sessionStorageHandlerFactory (key) {
+    return {
+        get: () => sessionStorage.getItem(key),
+        set: (value) => sessionStorage.setItem(key, value)
+    }
+}
 
 export default function FormController() {
-    // state stuff
     let [state, setState] = useState({
         loaded: false,
         clientData: {},
@@ -55,46 +59,43 @@ export default function FormController() {
     const formHook = useForm({
         resolver: joiResolver(formDataSchema),
     });
-    const { formState:{errors},handleSubmit,watch} = formHook;
+    const { formState:{errors},handleSubmit} = formHook;
 
-    sessionStorage.setItem("key", window.location.search.substring(1));
-
+    useEffect( () => {
+        (async () => {
+            // Creating session storage handlers for ease-of-use.
+            let keyStorage = sessionStorageHandlerFactory("key");
+            let userStorage = sessionStorageHandlerFactory("userData");
+            // we try to get userData from session storage.
+            let previousSession = userStorage.get();
+            let key = window.location.search.substring(1)
+            keyStorage.set(key);
+            // if the user has a previous session
+            if (previousSession) {
+                let {token} = await keyCrud.getFromDatabase(key);
+                await signIn(app, token);
+                setState({loaded: true, clientData: JSON.parse(previousSession), submitted: false});
+            } else {
+                if(key) {
+                    let {name, token} = await keyCrud.getFromDatabase(key);
+                    await signIn(app, token);
+                    let userData = await userCrud.getFromDatabase(name);
+                    userStorage.set(JSON.stringify(userData));
+                    setState({loaded: true, clientData: userData, submitted: false});
+                }else {
+                    setState({loaded: true, submitted: false,clientData: null});
+                }
+            }
+        })();
+    }, []);
 
     let clusters = state.loaded && state.clientData && Object.keys(state.clientData.data);
+
     async function signIn (app,token) {
         let auth = getAuth(app);
         sessionStorage.setItem("token", token);
         return signInWithCustomToken(auth,token)
     }
-    useEffect(() => {
-        let hasSessionStorage = sessionStorage.getItem("userData");
-        if (hasSessionStorage) {
-            setState({loaded: true, clientData: JSON.parse(hasSessionStorage), submitted: false});
-        } else {
-            let key = sessionStorage.getItem("key");
-            if(key){
-               keyCrud
-                   .getFromDatabase(key)
-                   .then(({name,token}) =>{
-                       if(name && token) {
-                                signIn(app,token)
-                               .then(() => {
-                                   userCrud
-                                       .getFromDatabase(name)
-                                       .then(res => {
-                                           sessionStorage.setItem("userData", JSON.stringify(res))
-                                           setState({loaded: true, clientData: res, submitted: false});
-                                       })
-                               })
-                       }else{
-                           setState({loaded: true, clientData: null, submitted: true})
-                       }
-                   })
-
-            }
-        }
-    }, []);
-
 
     async function handleSubmitHappyPath(data){
         let temp = state.clientData;
@@ -108,10 +109,11 @@ export default function FormController() {
     async function handleSubmitSadPath(data){
         console.error(data.ip.message);
     }
-    function handleAdd(){
-        if(isProduction) {
-            let prompt = window.prompt("Enter a nickname for this server");
-            if (prompt) {
+
+
+    let handleAdd = () =>{
+         let prompt = window.prompt("Enter a name for this server");
+         if (prompt) {
                 let temp = state.clientData;
                 temp.data[makeNickName(prompt)] = {
                     server: "Server Name",
@@ -129,13 +131,20 @@ export default function FormController() {
                 // reload the page
                 window.location.reload();
             }
-        }else{
-            alert("This feature is not yet available, Or is being developed for premium users");
-        }
+
     }
-    console.log(formToFirebaseAdapter(watch()));
-    return (
-        state.loaded &&
+    let handleDelete = (key) =>{
+            let temp = state.clientData;
+            delete temp.data[key];
+            sessionStorage.setItem("userData", JSON.stringify(temp));
+            window.location.reload();
+    }
+
+    let wrappedAdd = isDevelopmentWrapper(handleAdd)
+    let wrappedDelete = isDevelopmentWrapper((key)=>handleDelete(key))
+
+
+    return ( state.loaded &&
         <Box className="container">
             {!state.submitted && clusters &&
                 <Box className="App" bgGradient='linear(to-l, #7928CA, #FF0080)' pb={"5%"}>
@@ -144,14 +153,15 @@ export default function FormController() {
                         <Box w="55%" minW={"310px"} maxW={"648px"} p={"2.5%"} borderRadius={"7px"} background={"white"}>
                             <Heading noOfLines={1} mb={"2%"}>{state.clientData?.name}'s {<br/>} Config Page</Heading>
                             <ErrorPopup messages={errors} />
-                            <Tabs>
+                            <Tabs isFitted>
                                 <TabList>
                                     {clusters.map((cluster,index) => <Tab key={index}>{cluster}</Tab>)}
-                                    <Tab onClick={handleAdd}> + </Tab>
+                                    <Tab onClick={wrappedAdd}> + </Tab>
                                 </TabList>
                                 <TabPanels>
                                     {clusters.map((cluster,index) => <TabPanel key={index}>
                                         <ArkAlarmForm
+                                            handleDelete={wrappedDelete}
                                             clusterName={cluster}
                                             formHook={formHook}
                                             handleSubmitToFirebase={handleSubmit(handleSubmitHappyPath,handleSubmitSadPath)}
