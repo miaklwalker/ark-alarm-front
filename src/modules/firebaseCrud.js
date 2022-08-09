@@ -12,6 +12,7 @@ import {
     updateDoc,
     deleteDoc}
     from "firebase/firestore/lite";
+import {getAuth, signInWithCustomToken} from "firebase/auth";
 
 export const app = initializeApp({
     apiKey: "AIzaSyBnayFnmXsJfvVEu7X1oix70Zhs3lK5JwE",
@@ -23,6 +24,11 @@ export const app = initializeApp({
     measurementId: "G-6D6P3WX13T"
 });
 
+export async function signIn (app,token) {
+    let auth = getAuth(app);
+    sessionStorage.setItem("token", token);
+    return signInWithCustomToken(auth,token)
+}
 
 export class FirebaseCrud {
     constructor(collectionName) {

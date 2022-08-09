@@ -5,7 +5,18 @@ export default function ErrorPopup({messages}) {
         isOpen: isVisible,
         onClose,
     } = useDisclosure({ defaultIsOpen: true })
-    let errors = Object.values(messages).map(({message}) => message)
+    let errors = [];
+    Object.keys(messages)
+        .forEach(key=>{
+            let cluster = messages[key];
+            Object.keys(cluster)
+                .forEach(err=>{
+                    let errorMessage = cluster[err].message;
+                    // remove and periods and replace with spaces
+                    errorMessage = errorMessage.replace(/\./g, " ");
+                    errors.push(errorMessage);
+                })
+        })
     return isVisible && errors.length > 0 ? (
         <Alert status='error'>
             <AlertIcon />
