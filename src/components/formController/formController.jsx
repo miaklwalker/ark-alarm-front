@@ -11,18 +11,12 @@ import submitHandlerFactory from "../../modules/submitHandlerFactory";
 import TabArea from "../tabArea/tabArea";
 import tabControllerFactory from "../../modules/tabcontrollerFactory";
 
-
-
-
-
 function sessionStorageHandlerFactory (key) {
     return {
         get: () => sessionStorage.getItem(key),
         set: (value) => sessionStorage.setItem(key, value)
     }
 }
-
-
 
 export default function FormController() {
     let [state, setState] = useState({
