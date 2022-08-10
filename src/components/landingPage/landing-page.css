@@ -1,0 +1,19 @@
+.container{
+    display: grid;
+    grid-template-rows: 1fr 45vh 1fr ;
+    grid-template-columns: 5vw 1fr 5vw 1fr 5vw;
+    grid-template-areas:
+            ". . . . ."
+            ". text . image ."
+            ". . . . .";
+    place-content: center;
+    place-items: center;
+}
+.container>.text-container{
+    grid-area: text;
+    display: flex;
+    flex-direction: column;
+}
+.container>.img-container{
+    grid-area: image;
+}
