@@ -26,7 +26,7 @@ export default class Landing extends Component {
                 {({dark})=>{
                     let themeStyle = themeColors[themeNames[themeString(dark)]]
                     return (
-                     <Box className={"container"} height={"100vh"} {...themeStyle} >
+                     <Box className={"landing-container"} height={"100vh"} {...themeStyle} >
                          <Box className={"text-container"} width={"35vw"} >
                              <Heading  as={"h1"} size='3xl'>Ark Alarm</Heading>
                              <Heading  as={"h2"}>Discord bot</Heading>

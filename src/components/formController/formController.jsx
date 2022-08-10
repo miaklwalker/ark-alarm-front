@@ -75,12 +75,12 @@ export default function FormController() {
                             <Heading noOfLines={1} mb={"2%"}>{state.clientData?.name}'s {<br/>} Config Page</Heading>
                             <ErrorPopup messages={errors} />
                             <TabArea
-                            clusters={clusters}
-                            handleDelete={wrappedDelete}
-                            handleAdd={wrappedAdd}
-                            formHook={formHook}
-                            handleSubmit={handleSubmit(handleSubmitHappyPath,handleSubmitSadPath)}
-                            state={state}
+                                clusters={clusters}
+                                handleDelete={wrappedDelete}
+                                handleAdd={wrappedAdd}
+                                formHook={formHook}
+                                handleSubmit={handleSubmit(handleSubmitHappyPath,handleSubmitSadPath)}
+                                state={state}
                             />
                         </Box>
                     </Box>

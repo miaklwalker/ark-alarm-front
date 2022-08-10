@@ -1,7 +1,6 @@
 import {Button, HStack, Input} from "@chakra-ui/react";
 
 const MapContainer = (({data:[mapName,portNumber],handleClick,name,handleChange})=>{
-    // todo Make these changes update state.
     function helper () {
         return (e)=>handleChange(name,mapName,e.target.value)
     }
