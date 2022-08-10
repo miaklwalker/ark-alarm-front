@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import {FirebaseCrud, KeyCrud} from "./modules/firebaseCrud";
+import {ThemeProvider} from "./components/darkModeProvider/darkModeProvider";
 
 export const userCrud = new FirebaseCrud("Users");
 export const keyCrud = new KeyCrud("Keys");
@@ -21,7 +22,9 @@ export function isDevelopmentWrapper(feature){
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
         <React.StrictMode>
+           <ThemeProvider>
             <App/>
+           </ThemeProvider>
         </React.StrictMode>
 );
 

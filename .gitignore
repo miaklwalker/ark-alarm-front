@@ -24,3 +24,4 @@ yarn-error.log*
 .idea
 Ark-Alarm.code-workspace
 src/arkalarm.code-workspace
+src/.env
