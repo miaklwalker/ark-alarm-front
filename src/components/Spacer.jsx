@@ -1,7 +1,9 @@
-const Spacer = () => (
+const Spacer = ({size}) => (
     <>
         <br/>
-        <hr/>
+        <hr style={{
+            borderWidth:`${size}`,
+        }}/>
         <br/>
     </>
 );

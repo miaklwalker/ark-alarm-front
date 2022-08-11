@@ -24,13 +24,19 @@ export default function ArkAlarmMapSection({control,register,getValues,defValues
 
     return(
         <>
-            <Heading size={"md"}>Add new maps</Heading>
+            <Heading
+                size={"md"}
+                textTransform={"uppercase"}
+                textAlign={"left"}
+                letterSpacing={"1px"}
+                mb={"3%"}
+            >Add new maps</Heading>
             <Flex justify={"space-around"} align={"flex-end"}>
                 <ArkAlarmInput register={register} name={`${clusterName}.mapName`} defValue={"The Island"}/>
                 <ArkAlarmInput register={register} name={`${clusterName}.port`} defValue={"27015"}/>
                 <Button colorScheme={"green"} onClick={handleClick}> Add </Button>
             </Flex>
-            <Spacer/>
+            <Spacer size={"1px"}/>
             {fields.map((field,index)=>{
                 return(
                     <Flex justify={"space-around"} m={"2% 0"} key={field.id}>
